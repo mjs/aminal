@@ -12,12 +12,17 @@ import (
 
 type callback func(terminal *terminal.Terminal, g *gui.GUI)
 
+func init() {
+	fmt.Printf("\n!!!!!!!!!!!!! INIT\n")
+	runtime.LockOSThread()
+}
+
 func main() {
 	initialize(nil)
 }
 
 func initialize(fn callback) {
-	runtime.LockOSThread()
+
 
 	conf := getConfig()
 	logger, err := getLogger(conf)
