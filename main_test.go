@@ -4,12 +4,11 @@ package main
 
 import (
 	"fmt"
+	"github.com/liamg/aminal/gui"
+	"github.com/liamg/aminal/terminal"
 	"os"
 	"testing"
 	"time"
-
-	"github.com/liamg/aminal/gui"
-	"github.com/liamg/aminal/terminal"
 
 	"github.com/carlogit/phash"
 )
@@ -20,7 +19,7 @@ func terminate(msg string) int {
 }
 
 func sleep() {
-	time.Sleep(time.Second)
+	time.Sleep(time.Second * 3)
 }
 
 func hash(path string) string {
@@ -54,6 +53,7 @@ func enter(terminal *terminal.Terminal) {
 }
 
 func TestCursorMovement(t *testing.T) {
+	//runtime.LockOSThread()
 
 	testFunc := func(term *terminal.Terminal, g *gui.GUI) {
 		sleep()
