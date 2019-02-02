@@ -3,13 +3,13 @@ sudo: required
 matrix:
   include:
     - os: osx
-      osx_image: xcode10.1
+      osx_image: xcode8
       go: 1.10.x
     - os: osx
-      osx_image: xcode10.1
+      osx_image: xcode8
       go: 1.11.x
     - os: osx
-      osx_image: xcode10.1
+      osx_image: xcode8
       go: master
   allow_failures:
   - go: master
