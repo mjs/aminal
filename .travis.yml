@@ -29,7 +29,7 @@ before_install:
 
 script:
 - go get
-- if [[ $TRAVIS_OS_NAME == 'osx' ]]; make test; fi
+- if [[ $TRAVIS_OS_NAME == 'osx' ]]; then make test; fi
 - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then make build-darwin-native-travis; fi
 env:
   global:
