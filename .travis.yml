@@ -11,19 +11,23 @@ matrix:
       dist: xenial
       go: master
     - os: osx
-      osx_image: xcode8
+      osx_image: xcode10.1
       go: 1.10.x
     - os: osx
-      osx_image: xcode8
+      osx_image: xcode10.1
       go: 1.11.x
     - os: osx
-      osx_image: xcode8
+      osx_image: xcode10.1
       go: master
   allow_failures:
   - go: master
   fast_finish: true
 go_import_path: github.com/liamg/aminal
 before_install:
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+  brew update;
+  brew install glfw3;
+fi
 - "export DISPLAY=:98.0"
 - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then sudo apt-get install -y xorg-dev libgl1-mesa-dev
   gcc-multilib gcc-mingw-w64-x86-64 xvfb vttest && go get github.com/mitchellh/gox; fi
