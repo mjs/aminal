@@ -7,6 +7,7 @@ import (
 	"github.com/liamg/aminal/gui"
 	"github.com/liamg/aminal/terminal"
 	"os"
+	"runtime"
 	"testing"
 	"time"
 
@@ -53,9 +54,10 @@ func enter(terminal *terminal.Terminal) {
 }
 
 func TestCursorMovement(t *testing.T) {
-	//runtime.LockOSThread()
+	runtime.LockOSThread()
 
 	testFunc := func(term *terminal.Terminal, g *gui.GUI) {
+		runtime.LockOSThread()
 		sleep()
 		send(term, "vttest\n")
 		sleep()
