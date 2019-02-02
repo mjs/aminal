@@ -1,15 +1,6 @@
 language: go
 matrix:
   include:
-    - os: linux
-      dist: xenial
-      go: 1.10.x
-    - os: linux
-      dist: xenial
-      go: 1.11.x
-    - os: linux
-      dist: xenial
-      go: master
     - os: osx
       osx_image: xcode10.1
       go: 1.10.x
