@@ -25,9 +25,9 @@ matrix:
 go_import_path: github.com/liamg/aminal
 before_install:
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-  brew update;
-  brew install glfw3;
-fi
+    brew update;
+    brew install glfw3;
+  fi
 - "export DISPLAY=:98.0"
 - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then sudo apt-get install -y xorg-dev libgl1-mesa-dev
   gcc-multilib gcc-mingw-w64-x86-64 xvfb vttest && go get github.com/mitchellh/gox; fi
