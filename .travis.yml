@@ -23,13 +23,14 @@ go_import_path: github.com/liamg/aminal
 before_install:
 - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then sudo apt-get install -y xorg-dev libgl1-mesa-dev
   gcc-multilib gcc-mingw-w64-x86-64 xvfb vttest && go get github.com/mitchellh/gox; fi
-- if  [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-  ( sudo Xvfb :99 -ac -screen 0 1024x768x8; echo ok; ) &
-  fi;
-- sleep 3 # give xvfb some time to start
+#- if  [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+#  ( sudo Xvfb :99 -ac -screen 0 1024x768x8; echo ok; ) &
+#  fi;
+#- sleep 3 # give xvfb some time to start
 script:
 - go get
-- if [[ $TRAVIS_OS_NAME == 'linux' ]]; then xvfb-run --server-args="-screen 0 1024x768x24" make test; else make test; fi
+# - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then xvfb-run --server-args="-screen 0 1024x768x24" make test; else make test; fi
+- if [[ $TRAVIS_OS_NAME == 'osx' ]]; then Xvfb :99 -ac -screen 0 1024x768x8 && make test; fi
 - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then make build-darwin-native-travis; fi
 - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then make build-linux-travis; fi
 - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then make windows-cross-compile-travis; fi
