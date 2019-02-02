@@ -53,10 +53,6 @@ func enter(terminal *terminal.Terminal) {
 
 func TestMain(m *testing.M) {
 
-	/*go func() {
-		os.Exit(m.Run())
-	}()*/
-
 	testFunc := func(term *terminal.Terminal, g *gui.GUI) {
 		sleep()
 		send(term, "vttest\n")
