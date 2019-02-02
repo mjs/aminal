@@ -18,6 +18,7 @@ go_import_path: github.com/liamg/aminal
 before_install:
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     brew update;
+    brew install Caskroom/cask/xquartz;
     brew install glfw;
   fi
 - "export DISPLAY=:99.0"
