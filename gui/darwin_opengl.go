@@ -4,7 +4,7 @@ package gui
 
 /*
 #cgo darwin CFLAGS: -x objective-c -Wno-deprecated-declarations
-#cgo darwin LDFLAGS: -framework Foundation
+#cgo darwin LDFLAGS: -framework Foundation -framework QuartzCore -framework Metal
 #include <Cocoa/Cocoa.h>
 void cocoa_update_nsgl_context(void* id) {
     NSOpenGLContext *ctx = id;
