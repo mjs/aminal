@@ -472,7 +472,6 @@ Buffer Size: %d lines
 		}
 
 		gui.SwapBuffers()
-
 		glfw.WaitEvents() // Go to sleep until next event.
 
 		// Process any terminal events since the last wakeup.
@@ -490,7 +489,6 @@ Buffer Size: %d lines
 				break terminalEvents
 			}
 		}
-
 	}
 
 	close(stop) // Tell waker to end.
