@@ -10,18 +10,20 @@ import (
 	"strings"
 	"sync"
 	"time"
-
 	"unsafe"
 
 	"github.com/go-gl/gl/all-core/gl"
 	"github.com/go-gl/glfw/v3.2/glfw"
 	"github.com/kbinani/screenshot"
+	"github.com/therecipe/qt/core"
+	"github.com/therecipe/qt/widgets"
+	"go.uber.org/zap"
+
 	"github.com/liamg/aminal/buffer"
 	"github.com/liamg/aminal/config"
 	"github.com/liamg/aminal/platform"
 	"github.com/liamg/aminal/terminal"
 	"github.com/liamg/aminal/version"
-	"go.uber.org/zap"
 )
 
 // wakePeriod controls how often the main loop is woken up. This has
@@ -55,6 +57,8 @@ type GUI struct {
 	handCursor        *glfw.Cursor
 	arrowCursor       *glfw.Cursor
 	defaultCell       *buffer.Cell
+
+	qApp *widgets.QApplication
 
 	prevLeftClickX                  uint16
 	prevLeftClickY                  uint16
@@ -330,10 +334,12 @@ func (gui *GUI) getTermSize() (uint, uint) {
 
 func (gui *GUI) Close() {
 	gui.window.SetShouldClose(true)
-	glfw.PostEmptyEvent() // wake up main loop so it notices close request
+	gui.wakeMainLoop()
 }
 
 func (gui *GUI) Render() error {
+	gui.logger.Debugf("Creating UI...")
+	gui.qApp = createUI()
 
 	gui.logger.Debugf("Creating window...")
 	var err error
@@ -482,7 +488,9 @@ Buffer Size: %d lines
 		}
 
 		gui.SwapBuffers()
-		glfw.WaitEvents() // Go to sleep until next event.
+
+		gui.qApp.ProcessEvents(core.QEventLoop__AllEvents | core.QEventLoop__WaitForMoreEvents)
+		glfw.PollEvents()
 
 		// Process any terminal events since the last wakeup.
 	terminalEvents:
@@ -509,6 +517,12 @@ Buffer Size: %d lines
 
 }
 
+func (gui *GUI) wakeMainLoop() {
+	fmt.Println("W")
+	event := core.NewQEvent(core.QEvent__None)
+	gui.qApp.PostEvent(gui.qApp, event, 10)
+}
+
 // waker is a goroutine which listens to the terminal's dirty channel,
 // waking up the main thread when the GUI needs to be
 // redrawn. Limiting is applied on wakeups to avoid excessive CPU
@@ -520,6 +534,7 @@ func (gui *GUI) waker(stop <-chan struct{}) {
 	for {
 		select {
 		case <-dirty:
+			fmt.Println("D")
 			if nextWake == nil {
 				if time.Since(last) > wakePeriod {
 					// There hasn't been a wakeup recently so schedule
@@ -537,7 +552,7 @@ func (gui *GUI) waker(stop <-chan struct{}) {
 			// resolved.
 			time.Sleep(halfWakePeriod)
 
-			glfw.PostEmptyEvent()
+			gui.wakeMainLoop()
 			nextWake = nil
 		case <-stop:
 			return
@@ -841,4 +856,43 @@ func (gui *GUI) executeInMainThread(f func() error) error {
 	}
 	gui.terminal.NotifyDirty() // wake up the main thread to allow processing
 	return <-resultChan
+}
+
+func createUI() *widgets.QApplication {
+	// needs to be called once before you can start using the QWidgets
+	app := widgets.NewQApplication(0, []string{})
+
+	// create a window
+	// with a minimum size of 250*200
+	// and sets the title to "Hello Widgets Example"
+	window := widgets.NewQMainWindow(nil, 0)
+	window.SetMinimumSize2(250, 200)
+	window.SetWindowTitle("Hello Widgets Example")
+
+	// create a regular widget
+	// give it a QVBoxLayout
+	// and make it the central widget of the window
+	widget := widgets.NewQWidget(nil, 0)
+	widget.SetLayout(widgets.NewQVBoxLayout())
+	window.SetCentralWidget(widget)
+
+	// create a line edit
+	// with a custom placeholder text
+	// and add it to the central widgets layout
+	input := widgets.NewQLineEdit(nil)
+	input.SetPlaceholderText("Write something ...")
+	widget.Layout().AddWidget(input)
+
+	// create a button
+	// connect the clicked signal
+	// and add it to the central widgets layout
+	button := widgets.NewQPushButton2("click me!", nil)
+	button.ConnectClicked(func(bool) {
+		widgets.QMessageBox_Information(nil, "OK", input.Text(), widgets.QMessageBox__Ok, widgets.QMessageBox__Ok)
+	})
+	widget.Layout().AddWidget(button)
+
+	window.Show()
+
+	return app
 }
